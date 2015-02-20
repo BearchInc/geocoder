@@ -13,26 +13,26 @@ const (
 )
 
 type GoogleGeocoder struct {
-    Http                   *http.Client
+    httpClient             *http.Client
     ReverseGeocodeEndpoint string
 }
 
 func NewGoogleGeocoder() geocoder.Geocoder {
     return &GoogleGeocoder{
-        Http: &http.Client{},
+        httpClient: &http.Client{},
         ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
     }
 }
 
 func NewGoogleGeocoderWithHttpProvider(c *http.Client) geocoder.Geocoder {
     return &GoogleGeocoder{
-        Http: c,
+        httpClient: c,
         ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
     }
 }
 
 func (geo *GoogleGeocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, error) {
-    return geo.Http.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
+    return geo.httpClient.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
 }
 
 func AddressMapper(res *http.Response) (geocoder.Address, error) {

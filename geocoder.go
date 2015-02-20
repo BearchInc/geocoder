@@ -19,3 +19,5 @@ type Address struct {
 }
 
 type AddressMapper func(*http.Response) Address
+
+var EmptyAddress = Address{}

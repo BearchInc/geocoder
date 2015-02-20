@@ -8,14 +8,24 @@ import (
     "fmt"
 )
 
-const ReverseGeocodeEndpoint = "https://maps.googleapis.com/maps/api/geocode/json?latlng=%v,%v"
+const (
+    ReverseGeocodeEndpoint = "https://maps.googleapis.com/maps/api/geocode/json?latlng=%v,%v"
+)
 
 type GoogleGeocoder struct {
-    Http *http.Client
+    Http                   *http.Client
+    ReverseGeocodeEndpoint string
+}
+
+func NewGoogleGeocoder() geocoder.Geocoder {
+    return &GoogleGeocoder{
+        Http: &http.Client{},
+        ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
+    }
 }
 
 func (geo *GoogleGeocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, error) {
-    return geo.Http.Get(fmt.Sprintf(ReverseGeocodeEndpoint, lat, lng))
+    return geo.Http.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
 }
 
 func AddressMapper(res *http.Response) (geocoder.Address, error) {

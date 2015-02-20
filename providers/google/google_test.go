@@ -2,13 +2,12 @@ package google
 
 import (
     "testing"
-    "net/http"
     "github.com/stretchr/testify/assert"
     "github.com/drborges/geocoder/providers/google"
 )
 
 func TestReverseGeocode(t *testing.T) {
-    geocoder := google.GoogleGeocoder{&http.Client{}}
+    geocoder := google.NewGoogleGeocoder()
 
     res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 

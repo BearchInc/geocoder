@@ -44,10 +44,10 @@ type AddressComponents struct {
 }
 
 type GoogleGeoCoder struct {
-    Http http.Client
+    Http *http.Client
 }
 
-func NewGeoCoderWithHttpClient(c http.Client) geocoder.Geocoder {
+func NewGeoCoderWithHttpClient(c *http.Client) geocoder.Geocoder {
     return &GoogleGeoCoder{c}
 }
 

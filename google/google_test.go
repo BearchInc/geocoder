@@ -8,7 +8,7 @@ import (
 )
 
 func TestReverseGeocode(t *testing.T) {
-    geocoder := google.NewGeoCoderWithHttpClient(http.Client{})
+    geocoder := google.NewGeoCoderWithHttpClient(&http.Client{})
 
     res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 

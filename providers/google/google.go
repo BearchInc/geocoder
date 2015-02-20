@@ -24,6 +24,13 @@ func NewGoogleGeocoder() geocoder.Geocoder {
     }
 }
 
+func NewGoogleGeocoderWithHttpProvider(c *http.Client) geocoder.Geocoder {
+    return &GoogleGeocoder{
+        Http: c,
+        ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
+    }
+}
+
 func (geo *GoogleGeocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, error) {
     return geo.Http.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
 }

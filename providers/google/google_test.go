@@ -8,7 +8,7 @@ import (
 )
 
 func TestReverseGeocodeFromNewGoogleGeocoder(t *testing.T) {
-    geocoder := google.NewGoogleGeocoder()
+    geocoder := google.NewGeocoder()
 
     res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 
@@ -20,7 +20,7 @@ func TestReverseGeocodeFromNewGoogleGeocoder(t *testing.T) {
 }
 
 func TestReverseGeocodeFromNewGoogleGeocoderWithHttpProvider(t *testing.T) {
-    geocoder := google.NewGoogleGeocoderWithHttpProvider(&http.Client{})
+    geocoder := google.NewGeocoderWithHttpProvider(&http.Client{})
 
     res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 
@@ -32,7 +32,7 @@ func TestReverseGeocodeFromNewGoogleGeocoderWithHttpProvider(t *testing.T) {
 }
 
 func TestReverseGeocodeFromGoogleCoder(t *testing.T) {
-    geocoder := google.GoogleGeocoder{
+    geocoder := google.Geocoder{
         HttpClient: &http.Client{},
         ReverseGeocodeEndpoint: "https://maps.googleapis.com/maps/api/geocode/json?latlng=%v,%v",
     }

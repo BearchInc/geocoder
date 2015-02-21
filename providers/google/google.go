@@ -12,26 +12,26 @@ const (
     ReverseGeocodeEndpoint = "https://maps.googleapis.com/maps/api/geocode/json?latlng=%v,%v"
 )
 
-type GoogleGeocoder struct {
+type Geocoder struct {
     HttpClient             *http.Client
     ReverseGeocodeEndpoint string
 }
 
-func NewGoogleGeocoder() geocoder.Geocoder {
-    return &GoogleGeocoder{
+func NewGeocoder() geocoder.Geocoder {
+    return &Geocoder{
         HttpClient: &http.Client{},
         ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
     }
 }
 
-func NewGoogleGeocoderWithHttpProvider(c *http.Client) geocoder.Geocoder {
-    return &GoogleGeocoder{
+func NewGeocoderWithHttpProvider(c *http.Client) geocoder.Geocoder {
+    return &Geocoder{
         HttpClient: c,
         ReverseGeocodeEndpoint: ReverseGeocodeEndpoint,
     }
 }
 
-func (geo *GoogleGeocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, error) {
+func (geo *Geocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, error) {
     return geo.HttpClient.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
 }
 

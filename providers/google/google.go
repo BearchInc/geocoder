@@ -63,7 +63,7 @@ type Response struct {
 func (res *Response) address() geocoder.Address {
 	address := geocoder.Address{}
 	for _, result := range res.Results {
-		if result.Types[0] == "locality" {
+		if result.Types[0] == "postal_code" {
 			for _, addrComponent := range result.AddressComponents {
 				if addrComponent.Types[0] == "locality" {
 					address.City = addrComponent.ShortName

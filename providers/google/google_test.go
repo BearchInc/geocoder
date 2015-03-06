@@ -12,7 +12,8 @@ func TestReverseGeocodeFromNewGoogleGeocoder(t *testing.T) {
 
 	res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 
-	address, _ := google.AddressMapper(res)
+	var address google.Address
+	google.ReadResponse(res, &address)
 
 	assert.Equal(t, "Seattle", address.City)
 	assert.Equal(t, "WA", address.State)
@@ -24,7 +25,8 @@ func TestReverseGeocodeFromNewGoogleGeocoderWithHttpProvider(t *testing.T) {
 
 	res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 
-	address, _ := google.AddressMapper(res)
+	var address google.Address
+	google.ReadResponse(res, &address)
 
 	assert.Equal(t, "Seattle", address.City)
 	assert.Equal(t, "WA", address.State)
@@ -39,9 +41,25 @@ func TestReverseGeocodeFromGoogleCoder(t *testing.T) {
 
 	res, _ := geocoder.ReverseGeocode(47.6064, -122.330803)
 
-	address, _ := google.AddressMapper(res)
+	var address google.Address
+	google.ReadResponse(res, &address)
 
 	assert.Equal(t, "Seattle", address.City)
 	assert.Equal(t, "WA", address.State)
+	assert.Equal(t, "US", address.Country)
+}
+
+func TestReverseGeocodeForMSU(t *testing.T) {
+	lat, lng := 42.72476, -84.473639
+
+	geocoder := google.NewGeocoder()
+
+	res, _ := geocoder.ReverseGeocode(lat, lng)
+
+	var address google.Address
+	google.ReadResponse(res, &address)
+
+	assert.Equal(t, "East Lansing", address.City)
+	assert.Equal(t, "MI", address.State)
 	assert.Equal(t, "US", address.Country)
 }

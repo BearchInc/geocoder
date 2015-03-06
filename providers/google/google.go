@@ -6,6 +6,7 @@ import (
 	"github.com/drborges/geocoder"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 )
 
 const (
@@ -35,46 +36,49 @@ func (geo *Geocoder) ReverseGeocode(lat float64, lng float64) (*http.Response, e
 	return geo.HttpClient.Get(fmt.Sprintf(geo.ReverseGeocodeEndpoint, lat, lng))
 }
 
-func AddressMapper(res *http.Response) (geocoder.Address, error) {
-	if body, err := ioutil.ReadAll(res.Body); err == nil {
-		r := new(Response)
-		json.Unmarshal(body, &r)
-		return r.address(), nil
-	} else {
-		return geocoder.EmptyAddress, err
+type Address struct {
+	Country string `field:"short_name" type:"country"`
+	State   string `field:"short_name" type:"administrative_area_level_1"`
+	City    string `field:"short_name" type:"locality"`
+}
+
+func ReadResponse(res *http.Response, dst interface{}) error {
+	jsonData := readJson(res)
+
+	elem := reflect.TypeOf(dst).Elem()
+	elemValue := reflect.ValueOf(dst).Elem()
+
+	for i := 0; i < elem.NumField(); i++ {
+		field := elem.Field(i)
+		fieldValue := elemValue.Field(i)
+		mapField(jsonData, fieldValue, field.Tag.Get("field"), field.Tag.Get("type"))
 	}
+
+	return nil
 }
 
-type QueryResults struct {
-	Types             []string            `json:"types"`
-	AddressComponents []AddressComponents `json:"address_components"`
+func readJson(res *http.Response) map[string]interface{} {
+	jsonData := map[string]interface{}{}
+
+	if body, err := ioutil.ReadAll(res.Body); err == nil {
+		json.Unmarshal(body, &jsonData)
+	}
+
+	return jsonData
 }
 
-type AddressComponents struct {
-	LongName  string   `json:"long_name"`
-	ShortName string   `json:"short_name"`
-	Types     []string `json:"types"`
-}
-
-type Response struct {
-	Results []QueryResults `json:"results"`
-}
-
-func (res *Response) address() geocoder.Address {
-	address := geocoder.Address{}
-	for _, result := range res.Results {
-		if result.Types[0] == "postal_code" {
-			for _, addrComponent := range result.AddressComponents {
-				if addrComponent.Types[0] == "locality" {
-					address.City = addrComponent.ShortName
-				} else if addrComponent.Types[0] == "administrative_area_level_1" {
-					address.State = addrComponent.ShortName
-				} else if addrComponent.Types[0] == "country" {
-					address.Country = addrComponent.ShortName
+// TODO refactor this mess
+// Type assertions makes readability even harder.
+// Perhaps it would be better to map all fields at once rather than one by one.
+func mapField(jsonData map[string]interface{}, field reflect.Value, gmapsFieldName, gmapsFieldType string) {
+	for _, result := range jsonData["results"].([]interface{}) {
+		for _, component := range result.(map[string]interface{})["address_components"].([]interface{}) {
+			for _, componentType := range component.(map[string]interface{})["types"].([]interface{}) {
+				if componentType.(string) == gmapsFieldType {
+					field.SetString(component.(map[string]interface{})[gmapsFieldName].(string))
+					return
 				}
 			}
 		}
 	}
-
-	return address
 }

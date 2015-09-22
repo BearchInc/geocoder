@@ -40,6 +40,10 @@ type Address struct {
 	Country string `field:"short_name" type:"country"`
 	State   string `field:"short_name" type:"administrative_area_level_1"`
 	City    string `field:"short_name" type:"locality"`
+
+	FullCountry string `field:"long_name" type:"country"`
+	FullState   string `field:"long_name" type:"administrative_area_level_1"`
+	FullCity    string `field:"long_name" type:"locality"`
 }
 
 func ReadResponse(res *http.Response, dst interface{}) error {
